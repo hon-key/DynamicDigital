@@ -12,3 +12,5 @@ yourUILabel.dynamicDigitalAnimation = 1;
 yourUILabel.text = @"0";
 yourUILabel.text = @"25"
 ```
+
+[![Watch the video](https://raw.github.com/GabLeRoux/WebMole/master/ressources/WebMole_Youtube_Video.png)](https://github.com/hon-key/DynamicDigital/int-int.mov)
