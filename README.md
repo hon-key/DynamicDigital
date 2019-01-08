@@ -5,5 +5,6 @@ UILabel 动态数字扩展，需要自取
 
 # Usage
 ```
-yourUILabel.dynamicDigitalAnimation = 2; // set your animation duration and everything is done
+// set your animation duration and everything is done. dynamicDigitalAnimation = 0 represents no animation.
+yourUILabel.dynamicDigitalAnimation = 2; 
 ```
