@@ -13,4 +13,4 @@ yourUILabel.text = @"0";
 yourUILabel.text = @"25"
 ```
 
-[![Watch the video](https://raw.github.com/GabLeRoux/WebMole/master/ressources/WebMole_Youtube_Video.png)](https://github.com/hon-key/DynamicDigital/int-int.mov)
+[![Watch the video](https://raw.github.com/GabLeRoux/WebMole/master/ressources/WebMole_Youtube_Video.png)](https://github.com/hon-key/DynamicDigital/blob/master/int-int.mov)
