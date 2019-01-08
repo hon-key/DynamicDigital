@@ -1,11 +1,32 @@
 //
 //  DynamicString.m
+//  ShouYinTong
 //
-//  Created by Matt on 2018/12/20.
-//  Copyright © 2018 Matt. All rights reserved.
+//  Created by Ruite Chen on 2018/12/20.
+//  Copyright © 2018 乐刷. All rights reserved.
 //
 
 #import "DynamicString.h"
+#import <objc/runtime.h>
+
+@interface NSString (DynamicDigital)
+- (BOOL)isPureInteger;
+- (BOOL)isPureDouble;
+@end
+
+@implementation NSString (DynamicDigital)
+- (BOOL)isPureInteger {
+    NSScanner *scanner = [NSScanner scannerWithString:self];
+    NSInteger val;
+    return [scanner scanInteger:&val] && [scanner isAtEnd];
+}
+- (BOOL)isPureDouble {
+    NSScanner *scanner = [NSScanner scannerWithString:self];
+    double val;
+    return [scanner scanDouble:&val] && [scanner isAtEnd];
+}
+
+@end
 
 @implementation UILabel (DynamicDigital)
 - (CGFloat)dynamicDigitalAnimation {
@@ -55,34 +76,32 @@
         [self sw_setTextDoubleWithStart:startDigitalString end:endDigitalString];
     }
     
-    
-
 }
 
 - (void)sw_setTextIntergerWithStart:(NSString *)startDigitalString end:(NSString *)endDigitalString {
     NSInteger start = startDigitalString.integerValue;
     NSInteger end = endDigitalString.integerValue;
     NSInteger offset = end - start;
-    int count = labs(offset) <= 60 * self.dynamicDigitalAnimation ? labs(offset) : 60 * self.dynamicDigitalAnimation;
+    NSInteger count = labs(offset) <= 60 * self.dynamicDigitalAnimation ? labs(offset) : 60 * self.dynamicDigitalAnimation;
 
-    double rate = (double)labs(offset) / (double)count;
-    double littleDecimal = rate - (int)rate;
-    int bigPart = nearbyint(littleDecimal * count);
-    int smallSegment = (int)rate;
-    int bigSegment = smallSegment + 1;
+    CGFloat rate = (CGFloat)labs(offset) / (CGFloat)count;
+    CGFloat littleDecimal = rate - (NSInteger)rate;
+    NSInteger bigPart = nearbyint(littleDecimal * count);
+    NSInteger smallSegment = (NSInteger)rate;
+    NSInteger bigSegment = smallSegment + 1;
 
-    double time = self.dynamicDigitalAnimation / count;
+    CGFloat time = self.dynamicDigitalAnimation / count;
     self.dynamicTimer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_global_queue(0, 0));
     dispatch_source_set_timer(self.dynamicTimer, DISPATCH_TIME_NOW, time * NSEC_PER_SEC, 0 * NSEC_PER_SEC);
-    __block int index = 0;
+    __block NSInteger index = 0;
     __block NSInteger current = start;
     dispatch_source_set_event_handler(self.dynamicTimer, ^{
         index++;
-        static int segment;
+        static NSInteger segment;
         segment = index <= bigPart ? bigSegment : smallSegment;
         current = offset > 0 ? current + segment : current - segment;
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self sw_setText:[NSString stringWithFormat:@"%d",current]];
+            [self sw_setText:[NSString stringWithFormat:@"%ld",current]];
         });
         if (index >= count) {
             dispatch_source_cancel(self.dynamicTimer);
@@ -93,30 +112,31 @@
 }
 
 - (void)sw_setTextDoubleWithStart:(NSString *)startDigitalString end:(NSString *)endDigitalString {
-    int decimalNum = [endDigitalString componentsSeparatedByString:@"."][1].length;
-    NSInteger powNum = pow(10, [endDigitalString componentsSeparatedByString:@"."][1].length);
-    NSInteger start = startDigitalString.doubleValue * powNum;
-    NSInteger end = endDigitalString.doubleValue * powNum;
-    NSInteger offset = end - start;
-    int count = labs(offset) <= 60 * self.dynamicDigitalAnimation ? labs(offset) : 60 * self.dynamicDigitalAnimation;
+    CGFloat decimalNum = [endDigitalString componentsSeparatedByString:@"."][1].length;
+    CGFloat powNum = pow(10, [endDigitalString componentsSeparatedByString:@"."][1].length);
+    CGFloat start = startDigitalString.doubleValue * powNum;
+    CGFloat end = endDigitalString.doubleValue * powNum;
+    CGFloat offset = end - start;
+    CGFloat count = fabs(offset) <= 60 * self.dynamicDigitalAnimation ? fabs(offset) : 60 * self.dynamicDigitalAnimation;
     
-    double rate = (double)labs(offset) / (double)count;
-    double littleDecimal = rate - (int)rate;
-    int bigPart = nearbyint(littleDecimal * count);
-    int smallSegment = (int)rate;
-    int bigSegment = smallSegment + 1;
+    CGFloat rate = fabs(offset) / count;
+    CGFloat littleDecimal = rate - rate;
+    CGFloat bigPart = nearbyint(littleDecimal * count);
+    CGFloat smallSegment = rate;
+    CGFloat bigSegment = smallSegment + 1;
     
-    double time = self.dynamicDigitalAnimation / count;
+    CGFloat time = self.dynamicDigitalAnimation / count;
     self.dynamicTimer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_global_queue(0, 0));
     dispatch_source_set_timer(self.dynamicTimer, DISPATCH_TIME_NOW, time * NSEC_PER_SEC, 0 * NSEC_PER_SEC);
-    __block int index = 0;
-    __block double current = start;
+    __block CGFloat index = 0;
+    __block CGFloat current = start;
     dispatch_source_set_event_handler(self.dynamicTimer, ^{
         index++;
-        static int segment;
+        static CGFloat segment;
         segment = index <= bigPart ? bigSegment : smallSegment;
         current = offset > 0 ? current + segment : current - segment;
-        NSString *formatText = [NSString stringWithFormat:@"%%.%df",decimalNum];
+        NSLog(@"%lf,%lf/%lf",current,index,count);
+        NSString *formatText = [NSString stringWithFormat:@"%%.%.0lflf",decimalNum];
         dispatch_async(dispatch_get_main_queue(), ^{
             [self sw_setText:[NSString stringWithFormat:formatText,current/powNum]];
         });
