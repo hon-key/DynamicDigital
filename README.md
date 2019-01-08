@@ -9,7 +9,9 @@ UILabel 基于 GCD 和方法交换的动态数字扩展,支持浮点数和整数
 // Set your animation duration and everything is done. "dynamicDigitalAnimation = 0" represents no animation.
 yourUILabel.dynamicDigitalAnimation = 1; 
 
+// Set your origin digital number.
 yourUILabel.text = @"0";
+// Set your target digital number,it cause an animation automatically.
 yourUILabel.text = @"25"
 ```
 
